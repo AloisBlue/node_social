@@ -110,11 +110,11 @@ const profileSchema = new Schema({
     instagram: {
       type: String
     }
-  },
-  date: {
-    type: Date,
-    default: Date.now
   }
-});
+},
+{
+  timestamps: true
+}
+);
 
 export default mongoose.model('Profile', profileSchema)
