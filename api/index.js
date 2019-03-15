@@ -32,7 +32,7 @@ app.get("/", (req, res) => {
 // register endpoints
 app.use('/api/users', users)
 app.use('/api/profiles', profiles)
-// app.use('/api/posts', posts)
+app.use('/api/posts', posts)
 
 const port = process.env.PORT || 8080;
 
