@@ -98,32 +98,32 @@ router.get('/', auth, (req, res) => {
 // make a profile
 // private
 router.post('/', auth, (req, res) => {
-  const { errors, isValid } = validateProfileInput(req.body);
+  const { errors, isValid } = validateProfileInput(req.body.newProfile);
   if (!isValid) {
     return res.status(400).json(errors);
   }
 
   const profileFields = {};
   profileFields.user = req.user.user._id;
-  if(req.body.handle) profileFields.handle = req.body.handle;
-  if(req.body.company) profileFields.company = req.body.company;
-  if(req.body.website) profileFields.website = req.body.website;
-  if(req.body.location) profileFields.location = req.body.location;
-  if(req.body.bio) profileFields.bio = req.body.bio;
-  if(req.body.status) profileFields.status = req.body.status;
-  if(req.body.githubusername) profileFields.githubusername = req.body.githubusername;
+  if(req.body.newProfile.handle) profileFields.handle = req.body.newProfile.handle;
+  if(req.body.newProfile.company) profileFields.company = req.body.newProfile.company;
+  if(req.body.newProfile.website) profileFields.website = req.body.newProfile.website;
+  if(req.body.newProfile.location) profileFields.location = req.body.newProfile.location;
+  if(req.body.newProfile.bio) profileFields.bio = req.body.newProfile.bio;
+  if(req.body.newProfile.status) profileFields.status = req.body.newProfile.status;
+  if(req.body.newProfile.githubusername) profileFields.githubusername = req.body.newProfile.githubusername;
   // Skills split into an array
-  if(typeof req.body.skills !== 'undefined') {
-    profileFields.skills = req.body.skills.split(',');
+  if(typeof req.body.newProfile.skills !== 'undefined') {
+    profileFields.skills = req.body.newProfile.skills.split(',');
   }
 
   // social
   profileFields.social = {};
-  if(req.body.youtube) profileFields.social.youtube = req.body.youtube;
-  if(req.body.twitter) profileFields.social.twitter = req.body.twitter;
-  if(req.body.facebook) profileFields.social.facebook = req.body.facebook;
-  if(req.body.linkedin) profileFields.social.linkedin = req.body.linkedin;
-  if(req.body.instagram) profileFields.social.instagram = req.body.instagram;
+  if(req.body.newProfile.youtube) profileFields.social.youtube = req.body.newProfile.youtube;
+  if(req.body.newProfile.twitter) profileFields.social.twitter = req.body.newProfile.twitter;
+  if(req.body.newProfile.facebook) profileFields.social.facebook = req.body.newProfile.facebook;
+  if(req.body.newProfile.linkedin) profileFields.social.linkedin = req.body.newProfile.linkedin;
+  if(req.body.newProfile.instagram) profileFields.social.instagram = req.body.newProfile.instagram;
 
   Profile
   .findOne({ user: req.user.user._id })
@@ -158,7 +158,7 @@ router.post('/', auth, (req, res) => {
 // add experience
 // private
 router.post('/experience', auth, (req, res) => {
-  const { errors, isValid } = validateExperienceInput(req.body);
+  const { errors, isValid } = validateExperienceInput(req.body.newExperience);
 
   if(!isValid) {
     return res.status(400).json(errors)
@@ -172,18 +172,18 @@ router.post('/experience', auth, (req, res) => {
         return res.status(400).json(errors)
       }
 
-      const newExperience = {
-        title: req.body.title,
-        company: req.body.company,
-        location: req.body.location,
-        from: req.body.from,
-        to: req.body.to,
-        current: req.body.current,
-        description: req.body.description
+      const newExp = {
+        title: req.body.newExperience.title,
+        company: req.body.newExperience.company,
+        location: req.body.newExperience.location,
+        from: req.body.newExperience.from,
+        to: req.body.newExperience.to,
+        current: req.body.newExperience.current,
+        description: req.body.newExperience.description
       }
 
       // add experience to existing profile
-      profile.experience.unshift(newExperience);
+      profile.experience.unshift(newExp);
       // save
       profile
         .save()
@@ -196,7 +196,7 @@ router.post('/experience', auth, (req, res) => {
 // add education
 // private
 router.post('/education', auth, (req, res) => {
-  const { errors, isValid } = validateEducationInput(req.body);
+  const { errors, isValid } = validateEducationInput(req.body.newEducation);
   if (!isValid) {
     return res.status(400).json(errors);
   }
@@ -209,18 +209,18 @@ router.post('/education', auth, (req, res) => {
         return res.status(400).json(errors)
       }
 
-      const newEducation = {
-        school: req.body.school,
-        degree: req.body.degree,
-        fieldofstudy: req.body.fieldofstudy,
-        from: req.body.from,
-        to: req.body.to,
-        current: req.body.current,
-        description: req.body.description
+      const newEdu = {
+        school: req.body.newEducation.school,
+        degree: req.body.newEducation.degree,
+        fieldofstudy: req.body.newEducation.fieldofstudy,
+        from: req.body.newEducation.from,
+        to: req.body.newEducation.to,
+        current: req.body.newEducation.current,
+        description: req.body.newEducation.description
       }
 
       // add education to existing profile
-      profile.education.unshift(newEducation);
+      profile.education.unshift(newEdu);
       profile
       .save()
       .then(profile => res.status(200).json(profile))

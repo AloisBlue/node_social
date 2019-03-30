@@ -24,6 +24,10 @@ const validateSignupInput = data => {
     errors.email = 'Email field is required';
   }
 
+  if(!data.password.match('^(?=.{8,}$)(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%&^+=!]).*')) {
+    errors.password = 'A good password should contain uppercase, lowercase, special characters @#$%&^+=! , digits and above 8 characters'
+  }
+
   if(Validator.isEmpty(data.password)) {
     errors.password = 'Password field is required';
   }
@@ -31,10 +35,6 @@ const validateSignupInput = data => {
   // if(!Validator.isLength(data.password, { min: 8, max: 30 })) {
   //   errors.password = 'Password must be atleast 8 characters';
   // }
-
-  if(!data.password.match('^(?=.{8,}$)(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%&^+=!]).*')) {
-    errors.password = 'A good password should contain uppercase, lowercase, special characters @#$%&^+=! , digits and above 8 characters'
-  }
 
   return {
     errors,

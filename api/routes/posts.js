@@ -11,16 +11,16 @@ const router = express.Router();
 // create a Post
 // private
 router.post('/', auth, (req, res) => {
-  const { errors, isValid } = validateTextInput(req.body);
+  const { errors, isValid } = validateTextInput(req.body.addPost);
 
   if (!isValid) {
     return res.status(400).json(errors);
   }
 
   const newPost = new Post({
-    text: req.body.text,
-    name: req.body.name,
-    avatar: req.body.avatar,
+    text: req.body.addPost.text,
+    name: req.body.addPost.name,
+    avatar: req.body.addPost.avatar,
     user: req.user.user._id
   });
 
@@ -30,13 +30,14 @@ router.post('/', auth, (req, res) => {
   .catch(err => res.json(err));
 });
 
-//get all posts
-//public
+// get all posts
+// public
 router.get('/all', (req, res) => {
   const errors = {};
 
   Post
     .find()
+    .populate('user', ['name', 'avatar'])
     .sort({ createdAt: -1 })
     .then(posts => {
       if (posts.length == 0) {
@@ -50,7 +51,7 @@ router.get('/all', (req, res) => {
 })
 
 // get post by id
-//public
+// public
 router.get('/:post_id', (req, res) => {
   const errors = {};
 

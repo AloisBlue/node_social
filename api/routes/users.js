@@ -13,14 +13,14 @@ import { validateLoginInput, validateSignupInput } from "../validation/auth";
 const router = express.Router();
 
 router.post('/signup', (req, res) => {
-  const { errors, isValid } = validateSignupInput(req.body);
+  const { errors, isValid } = validateSignupInput(req.body.addUser);
   // validation
   if (!isValid) {
     return res.status(400).json(errors);
   }
 
   User
-  .findOne({ email: req.body.email })
+  .findOne({ email: req.body.addUser.email })
   .then(user => {
     if (user) {
       errors.email = "Such email already exists"
@@ -33,10 +33,10 @@ router.post('/signup', (req, res) => {
       });
 
       const newUser = new User({
-        name: req.body.name,
-        email: req.body.email,
+        name: req.body.addUser.name,
+        email: req.body.addUser.email,
         avatar,
-        password: req.body.password
+        password: req.body.addUser.password
       });
 
       bcrypt.genSalt(10, (err, salt) => {
@@ -44,7 +44,16 @@ router.post('/signup', (req, res) => {
           newUser.password = hash;
           newUser
             .save()
-            .then(user => res.json(user))
+            .then(user => res.status(201).json({
+              status: "201",
+              message: "You have successfully signed up, welcome...",
+              user: {
+                confirmed: user.confirmed,
+                _id: user._id,
+                name: user.name,
+                email: user.email
+              }
+            }))
             .catch(err => res.json(err.message));
         });
       });
@@ -53,18 +62,18 @@ router.post('/signup', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
-  const { errors, isValid } = validateLoginInput(req.body);
+  const { errors, isValid } = validateLoginInput(req.body.credentials);
   if(!isValid) {
     return res.status(400).json(errors);
   }
 
-  const email = req.body.email;
-  const password = req.body.password;
+  const email = req.body.credentials.email;
+  const password = req.body.credentials.password;
   User
     .findOne({email})
     .then(user => {
       if (!user) {
-        errors.email = "The credentials does not match please confirm email and password"
+        errors.global = "The credentials does not match please confirm email and password"
         return res.status(400).json(errors)
       }
       // check password
@@ -82,11 +91,17 @@ router.post('/login', (req, res) => {
                 .json({
                   status: "200",
                   message: "You have logged in as " + user.email,
+                  user: {
+                    email: user.email,
+                    token: token,
+                    name: user.name,
+                    avatar: user.avatar
+                  },
                   token: 'Bearer ' + token
                 });
             });
           } else {
-            errors.password = "Invalid credentials"
+            errors.global = "Invalid credentials"
             return res.status(401).json(errors)
           }
         })
